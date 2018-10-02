@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 
 // import { HttpClient, HttpResponse, HttpEventType } from '@angular/common/http';
 import { UploadService } from '../upload.service';
@@ -12,10 +12,25 @@ import {ElasticService} from '../elastic.service';
   providers:[UploadService,ElasticService]
 })
 export class UploadComponent implements OnInit {
-
+  isConnected = false;
+  status: string;
   selectedFiles: FileList;
   currentFileUpload: File;
-  constructor(private uploadService: UploadService,private ngxXml2jsonService: NgxXml2jsonService,private es: ElasticService) { }
+  constructor(private uploadService: UploadService,private ngxXml2jsonService: NgxXml2jsonService,private es: ElasticService,private cd: ChangeDetectorRef) { }
+
+  ngOnInit() {
+    this.es.isAvailable().then(() => {
+      this.status = 'OK';
+      this.isConnected = true;
+    }, error => {
+      this.status = 'ERROR';
+      this.isConnected = false;
+      console.error('Server is down', error);
+    }).then(() => {
+      this.cd.detectChanges();
+    });
+  }
+  
   selectFile(event) {
     this.selectedFiles = event.target.files;
     this.fileReader(event.target);
@@ -28,7 +43,7 @@ export class UploadComponent implements OnInit {
     myReader.onloadend=function(e){
       var fileContents = myReader.result;
       // console.log(fileContents);
-   self.xmlToJson(fileContents);
+   //self.xmlToJson(fileContents);
     }
     myReader.readAsText(file);
   }
@@ -41,8 +56,7 @@ export class UploadComponent implements OnInit {
   //   });
   //   this.selectedFiles = undefined;
   // }
-  ngOnInit() {
-  }
+ 
   xmlToJson(fileContents){
     const parser = new DOMParser();
     const xml = parser.parseFromString(fileContents, 'text/xml');
@@ -51,6 +65,7 @@ export class UploadComponent implements OnInit {
     this.es.addToIndex({
       index: 'vehicle_tracker',
       type: 'vehicles',
+      id:1,
       body: {
         xmlFileContents:xmlFileContents,
         submitted: new Date().toLocaleString()

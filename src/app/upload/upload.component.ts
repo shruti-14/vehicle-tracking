@@ -13,6 +13,7 @@ import {ElasticService} from '../elastic.service';
 })
 export class UploadComponent implements OnInit {
   isConnected = false;
+  report:any[];
   status: string;
   selectedFiles: FileList;
   currentFileUpload: File;
@@ -42,8 +43,7 @@ export class UploadComponent implements OnInit {
     var myReader:FileReader = new FileReader();
     myReader.onloadend=function(e){
       var fileContents = myReader.result;
-      // console.log(fileContents);
-   //self.xmlToJson(fileContents);
+      self.xmlToJson(fileContents);
     }
     myReader.readAsText(file);
   }
@@ -60,12 +60,19 @@ export class UploadComponent implements OnInit {
   xmlToJson(fileContents){
     const parser = new DOMParser();
     const xml = parser.parseFromString(fileContents, 'text/xml');
-    const xmlFileContents = this.ngxXml2jsonService.xmlToJson(xml);
-    console.log(xmlFileContents);
+    var xmlFileContents = this.ngxXml2jsonService.xmlToJson(xml);
+    // console.log(xmlFileContents.vehicles.vehicle[0]);
+   
+    //this.storeData(xmlFileContents);
+
+       
+  }
+  
+  storeData(xmlFileContents){
     this.es.addToIndex({
       index: 'vehicle_tracker',
       type: 'vehicles',
-      id:1,
+      id:'_' + Math.random().toString(36).substr(2, 9),
       body: {
         xmlFileContents:xmlFileContents,
         submitted: new Date().toLocaleString()
@@ -78,6 +85,5 @@ export class UploadComponent implements OnInit {
       console.error(error);
     });
   }
-  
 
 }

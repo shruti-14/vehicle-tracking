@@ -9,21 +9,29 @@
 	<h3 class="col-md-12 text-center">Elasticsearch server status: {{status}}</h3>
 
 	<div class="container">            
-		<table class="table table-dark table-striped">
-		  <!-- <thead>
-			<tr>
-			  <th>Firstname</th>
-			  <th>Lastname</th>
-			  <th>Email</th>
-			</tr>
-		  </thead> -->
-		  <tbody>
-			<tr *ngFor="let item of report">
-			  <td>{{item}}</td>
-			  <td>Doe</td>		
-			</tr>
+    <table class="table table-dark table-striped">
 
-		  </tbody>
-		</table>
+      <thead>
+      <tr>
+        <th>Vehicle-Name</th>
+        <th>Ids</th>
+        <th>Frame</th>
+        <th>Powertrain</th>
+        <th>Wheels</th>
+        <th>Timestamp</th>
+        <th>File</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of report">
+        <td>{{item.id}}</td>
+        <td>{{item.id}}</td>
+        <td>{{item.frame.material}}</td>
+        <td>{{item.id}}</td>
+        <td>{{item.id}}</td>
+        <td>{{item.id}}</td>
+      </tr>
+      </tbody>
+    </table>
 	  </div>
 

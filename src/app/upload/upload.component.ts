@@ -13,7 +13,7 @@ import {ElasticService} from '../elastic.service';
 })
 export class UploadComponent implements OnInit {
   isConnected = false;
-  report:any[];
+  report=[];
   status: string;
   selectedFiles: FileList;
   currentFileUpload: File;
@@ -58,11 +58,23 @@ export class UploadComponent implements OnInit {
   // }
  
   xmlToJson(fileContents){
+    var self=this;
     const parser = new DOMParser();
     const xml = parser.parseFromString(fileContents, 'text/xml');
     var xmlFileContents = this.ngxXml2jsonService.xmlToJson(xml);
-    // console.log(xmlFileContents.vehicles.vehicle[0]);
-   
+  //  console.log(xmlFileContents['vehicles'].vehicle[0]);
+   var vehicleList=xmlFileContents['vehicles'].vehicle;
+   var vehicleDetail={};
+   vehicleList.forEach(element => {
+     console.log(element);
+     
+     vehicleDetail={
+       "id":element.id,
+       "name":element.id,
+       "frame":element.frame.material
+     }
+     self.report.push(element);
+   });
     //this.storeData(xmlFileContents);
 
        

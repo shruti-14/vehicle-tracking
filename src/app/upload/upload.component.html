@@ -1,3 +1,5 @@
+
+
 <div style="text-align:center">
 	<label>
 		<input type="file" (change)="selectFile($event)" accept="text/xml">
@@ -24,14 +26,41 @@
       </thead>
       <tbody>
       <tr *ngFor="let item of report">
+        <td>{{item.name}}</td>
         <td>{{item.id}}</td>
-        <td>{{item.id}}</td>
-        <td>{{item.frame.material}}</td>
-        <td>{{item.id}}</td>
-        <td>{{item.id}}</td>
-        <td>{{item.id}}</td>
+        <td>{{item.frame}}</td>
+        <td>{{item.powerTrain}}</td>
+        <td>{{item.wheels}}</td>
+        <td>{{item.timestamp}}</td>
+        <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+          Uploaded File
+        </button></td>
+        <!-- <td (click)="onClickMe()">{{item.id}}</td> -->
       </tr>
       </tbody>
     </table>
-	  </div>
+    </div>
+    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+      Launch demo modal
+    </button> -->
+    
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <pre>
+          <div class="modal-body">{{fileContents}}
+            </div>
+        </pre> 
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <google-chart [data]="pieChartData"></google-chart>
+    </div>
+ 
 
+    

@@ -4,6 +4,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { UploadService } from '../upload.service';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import {ElasticService} from '../elastic.service';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-upload',
@@ -17,20 +18,11 @@ export class UploadComponent implements OnInit {
   status: string;
   selectedFiles: FileList;
   fileContents;
+  pieData=[
+    ['Vehicles', 'Number of vehicles']
+  ];
   currentFileUpload: File;
-  pieChartData =  {
-    chartType: 'PieChart',
-    dataTable: [
-      ['Task', 'Hours per Day'],
-      ['Work',     11],
-      ['Eat',      2],
-      ['Commute',  2],
-      ['Watch TV', 2],
-      ['Sleep',    7]
-    ],
-    options: {'title': 'Tasks'},
-    chartArea: {width: 900, height: 900}
-  };
+  pieChartData;
   constructor(private uploadService: UploadService,private ngxXml2jsonService: NgxXml2jsonService,private es: ElasticService,private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -95,7 +87,38 @@ export class UploadComponent implements OnInit {
      }
      self.report.push(vehicleDetail);
    });
-    // this.storeData(xmlFileContents,timeStamp);       
+   console.log(self.report);
+   var answer=[];
+   var setOfVehicles = new Set([]);
+   self.report.forEach(element=>{
+    setOfVehicles.add(element.name);  
+  });
+  setOfVehicles.forEach(setelement=>{
+    var count=0;
+    self.report.forEach(e=>{
+      if(e.name===setelement){
+        count++;
+      }
+    });  
+    answer.push([setelement,count]);
+  });
+
+   answer.forEach(element=>{
+    self.pieData.push(element);
+   });
+   console.log(self.pieData);
+   self.pieChartData =  {
+    chartType: 'PieChart',
+    dataTable: this.pieData,
+    options: {'title': 'Tasks',
+    'width': 800,
+    'height': 640,
+    colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
+    is3D: true}
+    
+  };
+ 
+    this.storeData(xmlFileContents,timeStamp);       
   }
   
   storeData(xmlFileContents,timeStamp){

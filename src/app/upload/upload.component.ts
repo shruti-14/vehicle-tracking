@@ -118,7 +118,7 @@ export class UploadComponent implements OnInit {
     
   };
  
-    this.storeData(xmlFileContents,timeStamp);       
+    //this.storeData(xmlFileContents,timeStamp);       
   }
   
   storeData(xmlFileContents,timeStamp){
@@ -195,7 +195,10 @@ export class UploadComponent implements OnInit {
     }
     return nameOfvehicle;
   }
-  onClickMe(){
-    document.write(this.fileContents);
+  getHistoryList(){
+    
+    console.log("History button listening");
+    this.es.countDocuments();
+    
   }
 }

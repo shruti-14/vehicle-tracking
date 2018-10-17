@@ -4,8 +4,8 @@
 	<label>
 		<input type="file" (change)="selectFile($event)" accept="text/xml">
 		</label>
-		<button [disabled]="!selectedFiles"
-(click)="upload()">Upload</button>
+		<button
+(click)="getHistoryList()">History</button>
 	</div>
 
 	<h3 class="col-md-12 text-center">Elasticsearch server status: {{status}}</h3>
@@ -35,7 +35,7 @@
         <td> <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
           Uploaded File
         </button></td>
-        <!-- <td (click)="onClickMe()">{{item.id}}</td> -->
+       
       </tr>
       </tbody>
     </table>

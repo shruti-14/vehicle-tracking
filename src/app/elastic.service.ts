@@ -36,4 +36,30 @@ export class ElasticService {
       body: 'hello working!'
     });
   }
+  countDocuments(){
+    // this.client.count({index: 'vehicle_tracker',type: 'vehicles'},function(err,resp,status) {  
+    //   console.log("vehicles",resp);
+    // });
+    this.client.search({  
+      index: 'vehicle_tracker',
+      type: 'vehicles',
+      body: {
+        query: {
+          match: { "submitted": "13/10/2018, 19:02:32" }
+        },
+      }
+    },function (error, response,status) {
+        if (error){
+          console.log("search error: "+error)
+        }
+        else {
+          console.log("--- Response ---");
+          // console.log(response);
+          console.log("--- Hits ---");
+          response.hits.hits.forEach(function(hit){
+            console.log(hit);
+          })
+        }
+    });
+  }
 }

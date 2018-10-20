@@ -51,75 +51,69 @@ export class UploadComponent implements OnInit {
       self.xmlToJson(self.fileContents);
     }
     myReader.readAsText(file);
-  }
-  // upload() {
-  //   this.currentFileUpload = this.selectedFiles.item(0);
-  //   this.uploadService.pushFileToStorage(this.currentFileUpload).subscribe(event => {
-  //    if (event instanceof HttpResponse) {
-  //       console.log('File is completely uploaded!');
-  //     }
-  //   });
-  //   this.selectedFiles = undefined;
-  // }
- 
+  } 
   xmlToJson(fileContents){
     var self=this;
     const parser = new DOMParser();
     const xml = parser.parseFromString(fileContents, 'text/xml');
     var xmlFileContents = this.ngxXml2jsonService.xmlToJson(xml);
-  //  console.log(xmlFileContents['vehicles'].vehicle[0]);
-   var vehicleList=xmlFileContents['vehicles'].vehicle;
-   var vehicleDetail={};
-   var timeStamp = new Date().toLocaleString();
-   vehicleList.forEach(element => {
-     console.log(element);
-     var powerTrain=self.powerTrainValue(element);
-     var wheels=self.wheelsValue(element);     
-     var frame=element.frame.material;
-     var vehicleName=self.nameOfvehicle(frame,powerTrain,wheels);
-     vehicleDetail={
-       "name":vehicleName,
-       "id":element.id,
-       "frame":frame,
-       "powerTrain":powerTrain,
-       "wheels":wheels,
-       "timestamp":timeStamp
-     }
-     self.report.push(vehicleDetail);
-   });
-   console.log(self.report);
-   var answer=[];
-   var setOfVehicles = new Set([]);
-   self.report.forEach(element=>{
-    setOfVehicles.add(element.name);  
-  });
-  setOfVehicles.forEach(setelement=>{
-    var count=0;
-    self.report.forEach(e=>{
-      if(e.name===setelement){
-        count++;
-      }
-    });  
-    answer.push([setelement,count]);
-  });
-
-   answer.forEach(element=>{
-    self.pieData.push(element);
-   });
-   console.log(self.pieData);
-   self.pieChartData =  {
-    chartType: 'PieChart',
-    dataTable: this.pieData,
-    options: {'title': 'Tasks',
-    'width': 800,
-    'height': 640,
-    colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
-    is3D: true}
-    
-  };
+    var timeStamp = new Date().toLocaleString();
+    self.reportGeneration(xmlFileContents,timeStamp);
  
     //this.storeData(xmlFileContents,timeStamp);       
   }
+
+reportGeneration(xmlFileContents,timeStamp){
+  var self=this;
+  var vehicleList=xmlFileContents['vehicles'].vehicle;
+  var vehicleDetail={};
+  vehicleList.forEach(element => {
+    console.log(element);
+    var powerTrain=self.powerTrainValue(element);
+    var wheels=self.wheelsValue(element);     
+    var frame=element.frame.material;
+    var vehicleName=self.nameOfvehicle(frame,powerTrain,wheels);
+    vehicleDetail={
+      "name":vehicleName,
+      "id":element.id,
+      "frame":frame,
+      "powerTrain":powerTrain,
+      "wheels":wheels,
+      "timestamp":timeStamp
+    }
+    self.report.push(vehicleDetail);
+  });
+  console.log(self.report);
+  var answer=[];
+  var setOfVehicles = new Set([]);
+  self.report.forEach(element=>{
+   setOfVehicles.add(element.name);  
+ });
+ setOfVehicles.forEach(setelement=>{
+   var count=0;
+   self.report.forEach(e=>{
+     if(e.name===setelement){
+       count++;
+     }
+   });  
+   answer.push([setelement,count]);
+ });
+
+  answer.forEach(element=>{
+   self.pieData.push(element);
+  });
+  console.log(self.pieData);
+  self.pieChartData =  {
+   chartType: 'PieChart',
+   dataTable: this.pieData,
+   options: {'title': 'Tasks',
+   'width': 800,
+   'height': 640,
+   colors: ['#e0440e', '#e6693e', '#ec8f6e', '#f3b49f', '#f6c7b6'],
+   is3D: true}
+   
+ };
+} 
   
   storeData(xmlFileContents,timeStamp){
     this.es.addToIndex({
@@ -198,7 +192,7 @@ export class UploadComponent implements OnInit {
   getHistoryList(){
     
     console.log("History button listening");
-    this.es.countDocuments();
+    this.es.getAllReports();
     
   }
 }

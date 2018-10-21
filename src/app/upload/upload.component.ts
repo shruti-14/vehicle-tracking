@@ -41,7 +41,6 @@ export class UploadComponent implements OnInit {
     this.selectedFiles = event.target.files;
     this.fileReader(event.target);
   }
-
   fileReader(target){
     var self=this;
     var file= target.files[0];

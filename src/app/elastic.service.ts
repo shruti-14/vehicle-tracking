@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as elasticsearch from 'elasticsearch-browser';
 import { Client } from 'elasticsearch-browser';
+import { Observable } from 'rxjs/Observable'
+import 'rxjs/add/operator/toPromise';
 @Injectable({
   providedIn: 'root'
 })
@@ -36,14 +38,12 @@ export class ElasticService {
       body: 'hello working!'
     });
   }
-  getAllReports(){
+
+  async getResults(){
     var hitsArray;
-    // this.client.count({index: 'vehicle_tracker',type: 'vehicles'},function(err,resp,status) {  
-    //   console.log("vehicles",resp);
-    // });
-    this.client.search({  
+    var result = await this.client.search({  
       index: 'vehicle_tracker',
-      type: 'vehicles',
+      type: 'vehicles1',
       body:{
         // query: {
         //     match: {
@@ -51,21 +51,30 @@ export class ElasticService {
         //     }
         // }
     }
-    },function (error, response, status) {
-        if (error){
-          console.log("search error: "+error);
-        }
-        else {
-          console.log("--- Response ---");
-           console.log(response);
-           console.log("--- Hits ---");
-          // response.hits.hits.forEach(function(hit){
-          //   console.log(hit);
-          // });
-          hitsArray= response.hits;
-          return hitsArray;
-        }
-    });
-   
+    }).then(response => {
+        console.log("--- Response ---");
+         console.log(response);
+         console.log("--- Hits ---");
+        // response.hits.hits.forEach(function(hit){
+        //   console.log(hit);
+        // });
+        hitsArray= response.hits;
+        //return response.hits;
+  });
+  console.log(hitsArray);
+  return hitsArray;
+  }  
+
+  async getAllReports(){
+    var hitsArray;
+    // this.client.count({index: 'vehicle_tracker',type: 'vehicles'},function(err,resp,status) {  
+    //   console.log("vehicles",resp);
+    // });
+
+    // return result;
+    var result=await this.getResults();
+    return result;
   }
+
+  
 }

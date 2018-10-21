@@ -30,8 +30,8 @@
     "ng2-google-charts": "^3.4.0",
     "ngx-bootstrap": "^3.0.1",
     "ngx-xml2json": "^1.0.2",
-    "rxjs": "^6.0.0",
-    "rxjs-compat": "^6.0.0-tactical-rc.1",
+    "rxjs": "^6.3.3",
+    "rxjs-compat": "^6.3.3",
     "typings": "^2.1.1",
     "zone.js": "^0.8.26"
   },

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ElasticService} from '../elastic.service';
-
+import 'rxjs/add/operator/toPromise';
 @Component({
   selector: 'app-history',
   templateUrl: './history.component.html',
@@ -10,9 +10,9 @@ export class HistoryComponent implements OnInit {
   records;
   constructor(private es: ElasticService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     console.log("History component loading");
-    this.records=this.es.getAllReports();
+    this.records=await this.es.getResults();
     console.log(this.records);
   }
 }

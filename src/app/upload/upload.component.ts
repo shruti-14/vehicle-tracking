@@ -44,25 +44,26 @@ export class UploadComponent implements OnInit {
   fileReader(target){
     var self=this;
     var file= target.files[0];
+    var fileName=file.name;
     var myReader:FileReader = new FileReader();
     myReader.onloadend=function(e){
       self.fileContents = myReader.result;
-      self.xmlToJson(self.fileContents);
+      self.xmlToJson(self.fileContents,fileName);
     }
     myReader.readAsText(file);
   } 
-  xmlToJson(fileContents){
+  xmlToJson(fileContents,fileName){
     var self=this;
     const parser = new DOMParser();
     const xml = parser.parseFromString(fileContents, 'text/xml');
     var xmlFileContents = this.ngxXml2jsonService.xmlToJson(xml);
     var timeStamp = new Date().toLocaleString();
-    self.reportGeneration(xmlFileContents,timeStamp);
+    self.reportGeneration(xmlFileContents,timeStamp,fileName);
  
-    //this.storeData(xmlFileContents,timeStamp);       
+    this.storeData(xmlFileContents,timeStamp,fileName);       
   }
 
-reportGeneration(xmlFileContents,timeStamp){
+reportGeneration(xmlFileContents,timeStamp,fileName){
   var self=this;
   var vehicleList=xmlFileContents['vehicles'].vehicle;
   var vehicleDetail={};
@@ -78,7 +79,8 @@ reportGeneration(xmlFileContents,timeStamp){
       "frame":frame,
       "powerTrain":powerTrain,
       "wheels":wheels,
-      "timestamp":timeStamp
+      "timestamp":timeStamp,
+      "fileName":fileName
     }
     self.report.push(vehicleDetail);
   });
@@ -102,7 +104,7 @@ reportGeneration(xmlFileContents,timeStamp){
    self.pieData.push(element);
   });
   console.log(self.pieData);
-  self.pieChartData =  {
+  self.pieChartData ={
    chartType: 'PieChart',
    dataTable: this.pieData,
    options: {'title': 'Tasks',
@@ -114,7 +116,7 @@ reportGeneration(xmlFileContents,timeStamp){
  };
 } 
   
-  storeData(xmlFileContents,timeStamp){
+  storeData(xmlFileContents,timeStamp,fileName){
     this.es.addToIndex({
       index: 'vehicle_tracker',
       type: 'vehicles',
@@ -122,7 +124,8 @@ reportGeneration(xmlFileContents,timeStamp){
       submitted: timeStamp,
       body: {
         xmlFileContents:xmlFileContents,
-        submitted: timeStamp
+        submitted: timeStamp,
+        fileName:fileName
       }
     }).then((result) => {
       console.log(result);

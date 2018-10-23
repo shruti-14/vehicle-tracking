@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +8,9 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'Vehicle Tracker';
   description = 'Angular - Elasticsearch';
+  @Output() generateReportEmit = new EventEmitter();
+  displayOlderReport(event){
+    this.generateReportEmit.emit(event);
+    console.log(event);
+  }
 }

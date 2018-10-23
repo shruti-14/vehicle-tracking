@@ -43,7 +43,7 @@ export class ElasticService {
     var hitsArray;
     var result = await this.client.search({  
       index: 'vehicle_tracker',
-      type: 'vehicles1',
+      type: 'vehicles',
       body:{
         // query: {
         //     match: {

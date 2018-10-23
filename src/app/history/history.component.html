@@ -7,8 +7,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
-          
+    <tr *ngFor="let item of records">
+      <td (click)="viewReport(item)">{{item.fileName}}</td>
+      <td>{{item.timeStamp}}</td>
     </tr>
   </tbody>
 </table>

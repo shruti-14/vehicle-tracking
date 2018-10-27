@@ -17,17 +17,18 @@ export class HistoryComponent implements OnInit {
      var uploadedFiles=await this.es.getResults();
      var uploadedFilesArray=uploadedFiles.hits;
      var uploadedFilesElement={};
-     console.log(uploadedFiles.hits[0]._source.fileName);
+     if(uploadedFiles.hits[0]){
+      console.log(uploadedFiles.hits[0]._source.fileName);
      
-     uploadedFilesArray.forEach(element => {
-     uploadedFilesElement={
-        "xmlFileContents":element._source.xmlFileContents,
-        "fileName":element._source.fileName,
-        "timeStamp":element._source.submitted
-      }
-       this.records.push(uploadedFilesElement)
-     });
-     
+      uploadedFilesArray.forEach(element => {
+      uploadedFilesElement={
+         "xmlFileContents":element._source.xmlFileContents,
+         "fileName":element._source.fileName,
+         "timeStamp":element._source.submitted
+       }
+        this.records.push(uploadedFilesElement)
+      });
+     }     
 
   }
   viewReport(e){

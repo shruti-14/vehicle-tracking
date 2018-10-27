@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input,OnChanges } from '@angular/core';
 
 // import { HttpClient, HttpResponse, HttpEventType } from '@angular/common/http';
 import { UploadService } from '../upload.service';
@@ -12,12 +12,13 @@ import { element } from 'protractor';
   styleUrls: ['./upload.component.css'],
   providers:[UploadService,ElasticService]
 })
-export class UploadComponent implements OnInit {
+export class UploadComponent implements OnInit,OnChanges {
   isConnected = false;
   report=[];
   status: string;
   selectedFiles: FileList;
   fileContents;
+  @Input() historyClickedFileData:{fileName:string,timeStamp:string,xmlFileContents:Object}
   pieData=[
     ['Vehicles', 'Number of vehicles']
   ];
@@ -37,6 +38,16 @@ export class UploadComponent implements OnInit {
       this.cd.detectChanges();
     });
   }  
+  ngOnChanges(changes) {
+    if (changes['historyClickedFileData']&& Object.keys(changes.historyClickedFileData.currentValue).length !== 0 && changes.historyClickedFileData.currentValue.constructor === Object) {
+      // this.data = 'Hello ' + this.name;
+      console.log(this.historyClickedFileData);
+      var xmlFileContents=this.historyClickedFileData.xmlFileContents;
+      var timeStamp=this.historyClickedFileData.timeStamp;
+      var fileName=this.historyClickedFileData.fileName;
+      this.reportGeneration(xmlFileContents,timeStamp,fileName);
+    }
+  }
   selectFile(event) {
     this.selectedFiles = event.target.files;
     this.fileReader(event.target);
@@ -65,6 +76,10 @@ export class UploadComponent implements OnInit {
 
 reportGeneration(xmlFileContents,timeStamp,fileName){
   var self=this;
+  self.report=[];
+  self.pieData=[
+    ['Vehicles', 'Number of vehicles']
+  ]
   var vehicleList=xmlFileContents['vehicles'].vehicle;
   var vehicleDetail={};
   vehicleList.forEach(element => {
@@ -114,9 +129,8 @@ reportGeneration(xmlFileContents,timeStamp,fileName){
    is3D: true}
    
  };
-} 
-  
-  storeData(xmlFileContents,timeStamp,fileName){
+}  
+storeData(xmlFileContents,timeStamp,fileName){
     this.es.addToIndex({
       index: 'vehicle_tracker',
       type: 'vehicles',
@@ -191,8 +205,7 @@ reportGeneration(xmlFileContents,timeStamp,fileName){
     }
     return nameOfvehicle;
   }
-  getHistoryList(){
-    
+  getHistoryList(){    
     console.log("History button listening");
     this.es.getAllReports();
     

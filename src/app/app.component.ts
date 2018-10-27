@@ -8,9 +8,15 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 export class AppComponent {
   title = 'Vehicle Tracker';
   description = 'Angular - Elasticsearch';
+  uploadElements={};
   @Output() generateReportEmit = new EventEmitter();
   displayOlderReport(event){
-    this.generateReportEmit.emit(event);
+    this.uploadElements={
+      "fileName":event.fileName,
+      "timeStamp":event.timeStamp,
+      "xmlFileContents":event.xmlFileContents
+    };
+    // this.generateReportEmit.emit(event);
     console.log(event);
   }
 }

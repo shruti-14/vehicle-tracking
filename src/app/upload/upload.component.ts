@@ -5,6 +5,7 @@ import { UploadService } from '../upload.service';
 import { NgxXml2jsonService } from 'ngx-xml2json';
 import {ElasticService} from '../elastic.service';
 import { element } from 'protractor';
+import {LocalStorageService, SessionStorageService} from 'ngx-webstorage';
 
 @Component({
   selector: 'app-upload',
@@ -18,13 +19,14 @@ export class UploadComponent implements OnInit,OnChanges {
   status: string;
   selectedFiles: FileList;
   fileContents;
-  @Input() historyClickedFileData:{fileName:string,timeStamp:string,xmlFileContents:Object}
+  isHistoryTabClicked:Boolean=false;
+  @Input() historyClickedFileData:{fileName:string,timeStamp:string,xmlFileContents:Object,id:string}
   pieData=[
     ['Vehicles', 'Number of vehicles']
   ];
   currentFileUpload: File;
   pieChartData;
-  constructor(private uploadService: UploadService,private ngxXml2jsonService: NgxXml2jsonService,private es: ElasticService,private cd: ChangeDetectorRef) { }
+  constructor(private uploadService: UploadService,private ngxXml2jsonService: NgxXml2jsonService,private es: ElasticService,private cd: ChangeDetectorRef,private localStorageService:LocalStorageService) { }
 
   ngOnInit() {
     this.es.isAvailable().then(() => {
@@ -42,10 +44,19 @@ export class UploadComponent implements OnInit,OnChanges {
     if (changes['historyClickedFileData']&& Object.keys(changes.historyClickedFileData.currentValue).length !== 0 && changes.historyClickedFileData.currentValue.constructor === Object) {
       // this.data = 'Hello ' + this.name;
       console.log(this.historyClickedFileData);
+      this.isHistoryTabClicked=true;
       var xmlFileContents=this.historyClickedFileData.xmlFileContents;
       var timeStamp=this.historyClickedFileData.timeStamp;
       var fileName=this.historyClickedFileData.fileName;
+      var id=this.historyClickedFileData.id;
+      var file=this.localStorageService.retrieve(id);
+      if(file&&Object.keys(file).length>0){
+        this.readFile(file,fileName);
+      }
       this.reportGeneration(xmlFileContents,timeStamp,fileName);
+    }
+    else{
+      this.isHistoryTabClicked=false;
     }
   }
   selectFile(event) {
@@ -56,14 +67,20 @@ export class UploadComponent implements OnInit,OnChanges {
     var self=this;
     var file= target.files[0];
     var fileName=file.name;
+    self.readFile(file,fileName);
+  } 
+  readFile(file,fileName){
+    var self=this;
     var myReader:FileReader = new FileReader();
     myReader.onloadend=function(e){
-      self.fileContents = myReader.result;
-      self.xmlToJson(self.fileContents,fileName);
+      self.fileContents = myReader.result;      
+      if(!self.isHistoryTabClicked){
+        self.xmlToJson(self.fileContents,fileName,file);
+      }
     }
     myReader.readAsText(file);
-  } 
-  xmlToJson(fileContents,fileName){
+  }
+  xmlToJson(fileContents,fileName,file){
     var self=this;
     const parser = new DOMParser();
     const xml = parser.parseFromString(fileContents, 'text/xml');
@@ -71,7 +88,7 @@ export class UploadComponent implements OnInit,OnChanges {
     var timeStamp = new Date().toLocaleString();
     self.reportGeneration(xmlFileContents,timeStamp,fileName);
  
-    this.storeData(xmlFileContents,timeStamp,fileName);       
+    this.storeData(xmlFileContents,timeStamp,fileName,file);       
   }
 
 reportGeneration(xmlFileContents,timeStamp,fileName){
@@ -130,11 +147,13 @@ reportGeneration(xmlFileContents,timeStamp,fileName){
    
  };
 }  
-storeData(xmlFileContents,timeStamp,fileName){
+storeData(xmlFileContents,timeStamp,fileName,file){
+  var id='_' + Math.random().toString(36).substr(2, 9);
+  this.localStorageService.store(id,file);
     this.es.addToIndex({
       index: 'vehicle_tracker',
       type: 'vehicles',
-      id:'_' + Math.random().toString(36).substr(2, 9),
+      id:id,
       submitted: timeStamp,
       body: {
         xmlFileContents:xmlFileContents,

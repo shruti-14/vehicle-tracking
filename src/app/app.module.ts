@@ -6,6 +6,12 @@ import { Ng2GoogleChartsModule } from 'ng2-google-charts';
 import { HistoryComponent } from './history/history.component';
 import 'rxjs/add/operator/toPromise';
 import { HeaderComponent } from './header/header.component';
+import {Ng2Webstorage} from 'ngx-webstorage';
+import {Routes, RouterModule} from '@angular/router';
+const appRoutes: Routes=[
+  {path:"upload",component:UploadComponent},
+  {path:"history",component:HistoryComponent}
+]
 @NgModule({
   declarations: [
     AppComponent,
@@ -15,7 +21,9 @@ import { HeaderComponent } from './header/header.component';
   ],
   imports: [
     BrowserModule,
-    Ng2GoogleChartsModule
+    Ng2GoogleChartsModule,
+    Ng2Webstorage,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [],
   bootstrap: [AppComponent]

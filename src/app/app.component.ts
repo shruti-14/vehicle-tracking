@@ -14,7 +14,8 @@ export class AppComponent {
     this.uploadElements={
       "fileName":event.fileName,
       "timeStamp":event.timeStamp,
-      "xmlFileContents":event.xmlFileContents
+      "xmlFileContents":event.xmlFileContents,
+      "id":event.id
     };
     // this.generateReportEmit.emit(event);
     console.log(event);

@@ -31,6 +31,8 @@
     "ng2-google-charts": "^3.4.0",
     "ngx-bootstrap": "^3.0.1",
     "ngx-xml2json": "^1.0.2",
+    "ngx-webstorage": "^2.0.1",
+    "ngx-webstorage-fix": "^1.8.1",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.3.3",
     "typings": "^2.1.1",
